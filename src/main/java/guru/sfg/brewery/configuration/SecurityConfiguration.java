@@ -52,11 +52,14 @@ public class SecurityConfiguration {
                                 .loginProcessingUrl("/login")
                                 .loginPage("/").permitAll()
                                 .successForwardUrl("/")
-                                .defaultSuccessUrl("/"))
+                                .defaultSuccessUrl("/")
+                                .failureUrl("/?error")
+                )
                 .logout(logoutConfigurer ->
                         logoutConfigurer
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", GET.name()))
-                                .logoutSuccessUrl("/").permitAll()
+                                .logoutSuccessUrl("/?logout").permitAll()
+
                 )
                 .httpBasic(withDefaults())
                 .csrf().ignoringAntMatchers("/h2-console/**",
