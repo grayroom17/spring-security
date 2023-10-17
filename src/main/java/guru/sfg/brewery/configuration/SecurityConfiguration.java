@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +24,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
+
+    UserDetailsService userDetailsService;
 
     //нужен для использования Data JPA SPel
     @Bean
@@ -62,8 +65,14 @@ public class SecurityConfiguration {
 
                 )
                 .httpBasic(withDefaults())
-                .csrf().ignoringAntMatchers("/h2-console/**",
-                        "/api/**");
+                .csrf().ignoringAntMatchers(
+                        "/h2-console/**",
+                        "/api/**"
+                )
+                .and()
+                .rememberMe()
+                .key("remember-me-key")
+                .userDetailsService(userDetailsService);
 
         //h2 configuration
         http.headers().frameOptions().sameOrigin();
