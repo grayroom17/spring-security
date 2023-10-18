@@ -37,7 +37,7 @@ logging:
         brewery: debug
     org:
       springframework:
-        security: debug
+        security: error
 #      hibernate:
 #        type:
 #          descriptor:
