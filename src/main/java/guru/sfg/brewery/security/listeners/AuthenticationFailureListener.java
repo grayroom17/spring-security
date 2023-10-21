@@ -1,5 +1,12 @@
 package guru.sfg.brewery.security.listeners;
 
+import guru.sfg.brewery.domain.security.LoginFailure;
+import guru.sfg.brewery.domain.security.User;
+import guru.sfg.brewery.repositories.security.LoginFailureRepository;
+import guru.sfg.brewery.repositories.security.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -7,9 +14,14 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class AuthenticationFailureListener {
+
+    LoginFailureRepository loginFailureRepository;
+    UserRepository userRepository;
 
     @EventListener
     public void listen(AuthenticationFailureBadCredentialsEvent event) {
@@ -17,15 +29,21 @@ public class AuthenticationFailureListener {
         log.debug("Login failure");
 
         if (event.getSource() instanceof UsernamePasswordAuthenticationToken token) {
-            if (token.getPrincipal() instanceof String) {
-                log.debug("Attempted Username: " + token.getPrincipal());
+            LoginFailure.LoginFailureBuilder builder = LoginFailure.builder();
+
+            if (token.getPrincipal() instanceof String userName) {
+                log.debug("Attempted Username: " + userName);
+                builder.username(userName);
+                userRepository.findByUsername(userName).ifPresent(builder::user);
             }
 
             if (token.getDetails() instanceof WebAuthenticationDetails details) {
                 log.debug("Source IP: " + details.getRemoteAddress());
+                builder.sourceIp(details.getRemoteAddress());
             }
+            LoginFailure failure = loginFailureRepository.save(builder.build());
+            log.debug("Failure Event: " + failure.getId());
         }
-
     }
 
 }
