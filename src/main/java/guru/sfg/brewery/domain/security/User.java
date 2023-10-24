@@ -55,10 +55,19 @@ public class User implements UserDetails, CredentialsContainer {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private Timestamp createdDate;
+    Timestamp createdDate;
 
     @UpdateTimestamp
-    private Timestamp lastModifiedDate;
+    Timestamp lastModifiedDate;
+
+    String google2FaSecret;
+
+    @Builder.Default
+    Boolean userGoogle2Fa = false;
+
+    @Transient
+    @Builder.Default
+    Boolean google2FaRequired = true;
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
