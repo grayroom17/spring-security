@@ -57,6 +57,27 @@ public class UserController {
         }
     }
 
+    @GetMapping("/verify2fa")
+    public String verify2fa() {
+        return "user/verify2fa";
+    }
+
+    @GetMapping("/verify2fa")
+    public String verifyPostOf2fa(@RequestParam Integer verifyCode) {
+
+        User user = getUser();
+
+        if (googleAuthenticator.authorizeUser(user.getUsername(), verifyCode)) {
+            ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                    .setGoogle2FaRequired(false);
+
+            return "/index";
+        } else {
+            return "user/verify2fa";
+        }
+
+    }
+
     private static User getUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
