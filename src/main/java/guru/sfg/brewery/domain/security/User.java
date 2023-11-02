@@ -63,7 +63,7 @@ public class User implements UserDetails, CredentialsContainer {
     String google2FaSecret;
 
     @Builder.Default
-    Boolean userGoogle2Fa = false;
+    Boolean useGoogle2Fa = false;
 
     @Transient
     @Builder.Default
