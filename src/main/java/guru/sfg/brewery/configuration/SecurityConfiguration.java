@@ -1,6 +1,7 @@
 package guru.sfg.brewery.configuration;
 
 import guru.sfg.brewery.security.CustomEncoderFactories;
+import guru.sfg.brewery.security.google.Google2FaFilter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.http.HttpMethod.GET;
@@ -27,6 +29,7 @@ public class SecurityConfiguration {
 
     //    UserDetailsService userDetailsService;
     PersistentTokenRepository persistentTokenRepository;
+    Google2FaFilter google2FaFilter;
 
     //нужен для использования Data JPA SPel
     @Bean
@@ -42,6 +45,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .addFilterBefore(google2FaFilter, SessionManagementFilter.class)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
