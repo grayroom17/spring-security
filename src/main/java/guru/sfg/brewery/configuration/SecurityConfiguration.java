@@ -22,9 +22,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@Configuration
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     //    UserDetailsService userDetailsService;
@@ -35,11 +35,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return CustomEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
